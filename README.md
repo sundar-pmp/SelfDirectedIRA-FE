@@ -38,3 +38,22 @@ Frontend application for the Self-Directed IRA registration and dashboard experi
   - `npm run test`
 - Project setup helper:
   - `npm run setup`
+
+## Deployment
+
+### Vercel
+
+1. Import this repository in Vercel.
+2. Set required environment variables (for example `NEXT_PUBLIC_API_URL`).
+3. Keep default Next.js build settings.
+4. Deploy.
+
+### Docker
+
+Build image:
+
+- `docker build -f frontend.Dockerfile -t selfdirectedira-frontend .`
+
+Run container:
+
+- `docker run -p 3000:3000 --env NEXT_PUBLIC_API_URL=http://localhost:5000 selfdirectedira-frontend`
