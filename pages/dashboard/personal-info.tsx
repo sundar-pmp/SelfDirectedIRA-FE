@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Step2PersonalInfo } from '@/components/registration/Step2PersonalInfo';
 import { RegistrationClient } from '@/lib/api/registrationClient';
+import type { PersonalInfoData, AddressData } from '@/types/registration';
 
 export default function DashboardPersonalInfoPage() {
   const [sessionId, setSessionId] = useState<string | null>(null);
-  const [personalData, setPersonalData] = useState<Record<string, unknown>>({});
-  const [addressData, setAddressData] = useState<Record<string, unknown>>({});
+  const [personalData, setPersonalData] = useState<Partial<PersonalInfoData>>({});
+  const [addressData, setAddressData] = useState<Partial<AddressData>>({});
   const [loading, setLoading] = useState(true);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -18,14 +19,14 @@ export default function DashboardPersonalInfoPage() {
     RegistrationClient.fetchProgress(sid)
       .then((progress) => {
         const data = progress.savedData ?? progress.registrationData ?? progress;
-        setPersonalData((data.personalInfo as Record<string, unknown>) ?? {});
-        setAddressData((data.address as Record<string, unknown>) ?? {});
+        setPersonalData((data.personalInfo as Partial<PersonalInfoData>) ?? {});
+        setAddressData((data.address as Partial<AddressData>) ?? {});
       })
       .catch(() => setPersonalData({}))
       .finally(() => setLoading(false));
   }, []);
 
-  const handleSave = (personal: Record<string, unknown>, address: Record<string, unknown>) => {
+  const handleSave = (personal: PersonalInfoData, address: AddressData) => {
     if (!sessionId) return;
     setSaveStatus('saving');
     setErrorMessage(null);
@@ -61,8 +62,8 @@ export default function DashboardPersonalInfoPage() {
         {saveStatus === 'error' && errorMessage && <div className="alert alert-error">{errorMessage}</div>}
         <div className="dashboard-form-wrap">
           <Step2PersonalInfo
-            personalData={personalData as any}
-            addressData={addressData as any}
+            personalData={personalData}
+            addressData={addressData}
             onNext={handleSave}
             submitLabel={saveStatus === 'saving' ? 'Saving...' : 'Save changes'}
           />

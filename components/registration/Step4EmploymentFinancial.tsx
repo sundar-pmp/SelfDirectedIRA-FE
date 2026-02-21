@@ -6,15 +6,20 @@ interface Step4Props {
   onNext: (data: EmploymentFinancialData) => void;
 }
 
+type EmploymentStatus = EmploymentFinancialData['employmentStatus'];
+type AnnualIncomeRange = EmploymentFinancialData['annualIncomeRange'];
+type NetWorthRange = EmploymentFinancialData['netWorthRange'];
+type InvestmentExperience = NonNullable<EmploymentFinancialData['investmentExperience']>;
+
 export function Step4EmploymentFinancial({ data, onNext }: Step4Props) {
-  const [employmentStatus, setEmploymentStatus] = useState(data.employmentStatus || 'employed');
+  const [employmentStatus, setEmploymentStatus] = useState<EmploymentStatus>(data.employmentStatus || 'employed');
   const [employerName, setEmployerName] = useState(data.employerName || '');
   const [employerAddress, setEmployerAddress] = useState(data.employerAddress || '');
   const [occupation, setOccupation] = useState(data.occupation || '');
-  const [annualIncomeRange, setAnnualIncomeRange] = useState(data.annualIncomeRange || 'under-50k');
-  const [netWorthRange, setNetWorthRange] = useState(data.netWorthRange || 'under-100k');
+  const [annualIncomeRange, setAnnualIncomeRange] = useState<AnnualIncomeRange>(data.annualIncomeRange || 'under-50k');
+  const [netWorthRange, setNetWorthRange] = useState<NetWorthRange>(data.netWorthRange || 'under-100k');
   const [sourceOfFunds, setSourceOfFunds] = useState<string[]>(data.sourceOfFunds || []);
-  const [investmentExperience, setInvestmentExperience] = useState(data.investmentExperience || 'limited');
+  const [investmentExperience, setInvestmentExperience] = useState<InvestmentExperience>(data.investmentExperience || 'limited');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const sourceOptions = [
@@ -71,7 +76,7 @@ export function Step4EmploymentFinancial({ data, onNext }: Step4Props) {
       <form onSubmit={handleSubmit} className="registration-form">
         <div className="form-group">
           <label htmlFor="employmentStatus">Employment Status *</label>
-          <select id="employmentStatus" value={employmentStatus} onChange={(e) => setEmploymentStatus(e.target.value)}>
+          <select id="employmentStatus" value={employmentStatus} onChange={(e) => setEmploymentStatus(e.target.value as EmploymentStatus)}>
             <option value="employed">Employed</option>
             <option value="self-employed">Self-Employed</option>
             <option value="unemployed">Unemployed</option>
@@ -126,7 +131,7 @@ export function Step4EmploymentFinancial({ data, onNext }: Step4Props) {
             <select
               id="annualIncomeRange"
               value={annualIncomeRange}
-              onChange={(e) => setAnnualIncomeRange(e.target.value)}
+              onChange={(e) => setAnnualIncomeRange(e.target.value as AnnualIncomeRange)}
             >
               <option value="under-50k">Under $50,000</option>
               <option value="50k-100k">$50,000 - $100,000</option>
@@ -138,7 +143,7 @@ export function Step4EmploymentFinancial({ data, onNext }: Step4Props) {
 
           <div className="form-group">
             <label htmlFor="netWorthRange">Net Worth Range *</label>
-            <select id="netWorthRange" value={netWorthRange} onChange={(e) => setNetWorthRange(e.target.value)}>
+            <select id="netWorthRange" value={netWorthRange} onChange={(e) => setNetWorthRange(e.target.value as NetWorthRange)}>
               <option value="under-100k">Under $100,000</option>
               <option value="100k-500k">$100,000 - $500,000</option>
               <option value="500k-1m">$500,000 - $1,000,000</option>
@@ -171,7 +176,7 @@ export function Step4EmploymentFinancial({ data, onNext }: Step4Props) {
           <select
             id="investmentExperience"
             value={investmentExperience}
-            onChange={(e) => setInvestmentExperience(e.target.value as any)}
+            onChange={(e) => setInvestmentExperience(e.target.value as InvestmentExperience)}
           >
             <option value="none">None</option>
             <option value="limited">Limited</option>

@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Step10SecurityConfirm } from '@/components/registration/Step10SecurityConfirm';
 import { RegistrationClient } from '@/lib/api/registrationClient';
+import type { SecuritySetupData, RegistrationResponse } from '@/types/registration';
 
 export default function DashboardSecurityPage() {
   const [sessionId, setSessionId] = useState<string | null>(null);
-  const [data, setData] = useState<Record<string, unknown>>({});
+  const [data, setData] = useState<Partial<SecuritySetupData>>({});
   const [loading, setLoading] = useState(true);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -17,26 +18,17 @@ export default function DashboardSecurityPage() {
     RegistrationClient.fetchProgress(sid)
       .then((progress) => {
         const raw = progress.savedData ?? progress.registrationData ?? progress;
-        setData((raw.securitySetup as Record<string, unknown>) ?? {});
+        setData((raw.securitySetup as Partial<SecuritySetupData>) ?? {});
       })
       .catch(() => setData({}))
       .finally(() => setLoading(false));
   }, []);
 
-  const handleSave = (payload: Record<string, unknown>) => {
-    if (!sessionId) return;
+  const handleComplete = (_response: RegistrationResponse) => {
     setSaveStatus('saving');
     setErrorMessage(null);
-    // Security/2FA is submitted via the same endpoint; after registration complete it may not update. Use save-style flow.
-    RegistrationClient.submitFinalRegistration(sessionId, payload)
-      .then(() => {
-        setSaveStatus('success');
-        setTimeout(() => setSaveStatus('idle'), 3000);
-      })
-      .catch((err) => {
-        setSaveStatus('error');
-        setErrorMessage(err instanceof Error ? err.message : 'Save failed');
-      });
+    setSaveStatus('success');
+    setTimeout(() => setSaveStatus('idle'), 3000);
   };
 
   if (loading) {
@@ -56,9 +48,9 @@ export default function DashboardSecurityPage() {
         {saveStatus === 'error' && errorMessage && <div className="alert alert-error">{errorMessage}</div>}
         <div className="dashboard-form-wrap">
           <Step10SecurityConfirm
-            data={data as any}
+            data={data}
             sessionId={sessionId!}
-            onComplete={handleSave}
+            onComplete={handleComplete}
           />
         </div>
       </div>

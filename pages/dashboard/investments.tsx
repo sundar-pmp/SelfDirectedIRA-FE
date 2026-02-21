@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Step8InvestmentsRisk } from '@/components/registration/Step8InvestmentsRisk';
 import { RegistrationClient } from '@/lib/api/registrationClient';
+import type { InvestmentPreferencesData } from '@/types/registration';
 
 export default function DashboardInvestmentsPage() {
   const [sessionId, setSessionId] = useState<string | null>(null);
-  const [data, setData] = useState<Record<string, unknown>>({});
+  const [data, setData] = useState<Partial<InvestmentPreferencesData>>({});
   const [loading, setLoading] = useState(true);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -17,13 +18,13 @@ export default function DashboardInvestmentsPage() {
     RegistrationClient.fetchProgress(sid)
       .then((progress) => {
         const raw = progress.savedData ?? progress.registrationData ?? progress;
-        setData((raw.investmentPreferences as Record<string, unknown>) ?? {});
+        setData((raw.investmentPreferences as Partial<InvestmentPreferencesData>) ?? {});
       })
       .catch(() => setData({}))
       .finally(() => setLoading(false));
   }, []);
 
-  const handleSave = (payload: Record<string, unknown>) => {
+  const handleSave = (payload: InvestmentPreferencesData) => {
     if (!sessionId) return;
     setSaveStatus('saving');
     setErrorMessage(null);
@@ -54,7 +55,7 @@ export default function DashboardInvestmentsPage() {
         {saveStatus === 'success' && <div className="alert alert-success">Changes saved successfully.</div>}
         {saveStatus === 'error' && errorMessage && <div className="alert alert-error">{errorMessage}</div>}
         <div className="dashboard-form-wrap">
-          <Step8InvestmentsRisk data={data as any} onNext={handleSave} />
+          <Step8InvestmentsRisk data={data} onNext={handleSave} />
         </div>
       </div>
     </DashboardLayout>
