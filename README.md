@@ -14,7 +14,8 @@ Frontend application for the Self-Directed IRA registration and dashboard experi
 2. Create your local env file (example):
    - Copy `.env.local.example` to `.env.local`
 3. Configure API base URL in `.env.local` (if needed), for example:
-   - `NEXT_PUBLIC_API_URL=http://localhost:5000`
+  - `NEXT_PUBLIC_API_URL=http://localhost:5000`
+  - You can also use `http://localhost:5000/api`; both formats are supported.
 
 ## Run locally
 

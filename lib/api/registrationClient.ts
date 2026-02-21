@@ -1,6 +1,12 @@
 import type { RegistrationRequest, RegistrationResponse } from '@/types/registration';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const getApiUrl = () => {
+  const configuredBaseUrl = process.env.NEXT_PUBLIC_API_URL?.trim() || 'http://localhost:5000';
+  const normalizedBaseUrl = configuredBaseUrl.replace(/\/+$/, '');
+  return normalizedBaseUrl.endsWith('/api') ? normalizedBaseUrl : `${normalizedBaseUrl}/api`;
+};
+
+const API_URL = getApiUrl();
 
 /**
  * The "session id" from register/login is the registration progress id:
